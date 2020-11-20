@@ -57,38 +57,34 @@ export default {
     }
   },
   methods: {
-    // 表单重置按钮
+     // 表单重置按钮
     resetLoginForm () {
       // console.log(this)
       // resetFields：element-ui提供的表单方法
-      
-      this.$refs.loginFormRef.resetFields();
+      this.$refs.loginFormRef.resetFields()
     },
     login () {
       // 表单预验证
       // valid：bool类型
       this.$refs.loginFormRef.validate(async valid => {
-          if(!valid) return;
-          const result=await this.$axios.post('login',this.loginForm);
-            // console.log(result.data);
-            if(result.data.meta.status!=200){
-                return   this.$message.error({
-                message: result.data.meta.msg
-              });
-            }else{
-                this.$message.success({
-                message: result.data.meta.msg
-              });
-              //把token保存在sessionstorage中
-               window.sessionStorage.setItem("token",result.data.token);
-                //跳转页面
-                this.$router.push("/home");
-            }
-           
-
-      });
+        // console.log(valid)
+        if (!valid) return false
+        // this.$http.post('login', this.loginForm): 返回值为promise
+        // 返回值为promise，可加await简化操作 相应的也要加async
+        const { data: res } = await this.$axios.post('login', this.loginForm)
+        // console.log(res)
+        if (res.meta.status !== 200) return this.$message.error('登录失败')
+        this.$message.success('登录成功')
+        // 1、将登陆成功之后的token, 保存到客户端的sessionStorage中; localStorage中是持久化的保存
+        //   1.1 项目中出现了登录之外的其他API接口，必须在登陆之后才能访问
+        //   1.2 token 只应在当前网站打开期间生效，所以将token保存在sessionStorage中
+        window.sessionStorage.setItem('token', res.data.token)
+        // 2、通过编程式导航跳转到后台主页, 路由地址为：/home
+        this.$router.push('/home')
+      })
     }
-  }
+    }
+  
 }
 </script>
 
