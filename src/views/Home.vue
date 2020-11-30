@@ -35,6 +35,7 @@
               <i :class="iconObj[item.id]"></i>
               <span>{{ item.authName }}</span>
             </template>
+            <!-- 二级菜单 -->
             <el-menu-item
               :index="'/' + subItem.path + ''"
               v-for="subItem in item.children"
@@ -92,7 +93,7 @@ export default {
     // 获取请求菜单
     async getMenuList() {
       const { data: res } = await this.$axios.get("menus");
-      console.log(res);
+      // console.log(res);
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg);
       this.menulist = res.data;
       // console.log(this.menulist)
